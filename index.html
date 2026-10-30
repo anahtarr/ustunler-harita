@@ -310,7 +310,7 @@ let fitted = false;
 const ro = new ResizeObserver(() => {
   if (fitted) return;
   map.invalidateSize();
-  if (map.getSize().x > 0) { fitted = true; ro.disconnect(); map.fitBounds(bounds, { padding: [20, 20], animate: false }); syncLabels(); }
+  const sz = map.getSize(); if (sz.x > 0 && sz.y > 0) { fitted = true; ro.disconnect(); map.fitBounds(bounds, { padding: [20, 20], animate: false }); syncLabels(); }
 });
 ro.observe(document.getElementById("map"));
 render();
