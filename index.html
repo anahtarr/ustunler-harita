@@ -29,6 +29,7 @@
 
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; }
+.leaflet-bar a.reset { display: flex; align-items: center; justify-content: center; color: #222; }
 .app { display: grid; grid-template-columns: minmax(0, 1fr) 380px; height: 100%; }
 #map { height: 100%; background: #2a2f28; }
 aside { display: flex; flex-direction: column; min-height: 0; background: var(--panel); border-left: 1px solid var(--line); }
@@ -301,6 +302,32 @@ document.getElementById("chips").addEventListener("click", e => {
   c.setAttribute("aria-pressed", active.has(n));
   render();
 });
+
+// Sıfırla: seçimi, aramayı, filtreleri ve görünümü ilk açılış hâline döndür
+function resetAll() {
+  map.closePopup();
+  if (selected && layers[selected]) layers[selected].lyr.setStyle(style(layers[selected].f, false));
+  selected = null;
+  q.value = ""; sortSel.value = "parsel";
+  Object.keys(COLORS).forEach(n => active.add(n));
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "true"));
+  render();
+  document.getElementById("list").scrollTop = 0;
+  map.flyToBounds(bounds, { padding: [20, 20], duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.8 });
+}
+const ResetCtl = L.Control.extend({
+  options: { position: "topleft" },
+  onAdd() {
+    const bar = L.DomUtil.create("div", "leaflet-bar");
+    const a = L.DomUtil.create("a", "reset", bar);
+    a.href = "#"; a.title = "Sıfırla"; a.setAttribute("role", "button"); a.setAttribute("aria-label", "Haritayı sıfırla");
+    a.innerHTML = `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9M2.5 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    L.DomEvent.disableClickPropagation(bar);
+    L.DomEvent.on(a, "click", e => { L.DomEvent.preventDefault(e); resetAll(); });
+    return bar;
+  }
+});
+new ResetCtl().addTo(map);
 
 loadPack("lo");
 // Kap henüz boyut almadan fitBounds en yakın zoom'a gider; boyut gelince bir kez sığdır
