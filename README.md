@@ -1,3 +1,3 @@
-# Üstünler Taşınmazlar
+# Üstünler Tapu Haritası
 
-Beyşehir, Üstünler Mah. parselleri — etkileşimli harita.
+Beyşehir, Üstünler Mah. parselleri: etkileşimli uydu haritası.

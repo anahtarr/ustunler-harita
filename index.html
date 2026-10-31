@@ -1,4 +1,16 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Üstünler Taşınmazlar</title>
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Üstünler Tapu Haritası</title>
+<meta name="description" content="Konya Beyşehir Üstünler Mahallesi'ndeki 63 parselin uydu haritası: hisseler, ortaklar ve tapu kayıtları.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f6b3a'/%3E%3Cpath d='M16 6c-4.4 0-8 3.4-8 7.7C8 19.5 16 27 16 27s8-7.5 8-13.3C24 9.4 20.4 6 16 6z' fill='%23f2c14e'/%3E%3Ccircle cx='16' cy='13.6' r='3' fill='%232f6b3a'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Üstünler Tapu Haritası">
+<meta property="og:description" content="Konya Beyşehir Üstünler Mahallesi'ndeki 63 parselin uydu haritası: hisseler, ortaklar ve tapu kayıtları.">
+<meta property="og:url" content="https://anahtarr.github.io/ustunler-harita/">
+<meta property="og:image" content="https://anahtarr.github.io/ustunler-harita/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1b1f1a">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -16,16 +28,19 @@
   --momBg: #fbf3d6;
   --momLine: #e8d48a;
   --momFg: #8a6400;
+  --warn: #b3261e;
+  --warnBg: #fbeceb;
+  --warnLine: #ebc3bf;
   --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
   --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #141713; --panel: #1b1f1a; --fg: #e6e9e1; --muted: #9aa294; --line: #2e342c; --accent: #8fcf8f; --hover: #252b23;
-  --momBg: #2a2614; --momLine: #5a4d1c; --momFg: #f2c14e; color-scheme: dark } }
+  --momBg: #2a2614; --momLine: #5a4d1c; --momFg: #f2c14e; --warn: #ff8a80; --warnBg: #2c1918; --warnLine: #5c2b28; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #141713; --panel: #1b1f1a; --fg: #e6e9e1; --muted: #9aa294; --line: #2e342c; --accent: #8fcf8f; --hover: #252b23;
-  --momBg: #2a2614; --momLine: #5a4d1c; --momFg: #f2c14e; color-scheme: dark }
+  --momBg: #2a2614; --momLine: #5a4d1c; --momFg: #f2c14e; --warn: #ff8a80; --warnBg: #2c1918; --warnLine: #5c2b28; color-scheme: dark }
 
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; }
@@ -62,6 +77,52 @@ h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 3
 .row .area small { display: block; color: var(--muted); font-size: 11px; }
 .foot { padding-block: 10px; padding-left: 18px; padding-right: max(18px, env(safe-area-inset-right, 0px)); border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); line-height: 1.5; }
 .empty { padding: 24px 18px; color: var(--muted); }
+.tools select { flex: 0 1 auto; min-width: 0; max-width: 50%; }
+aside { min-width: 0; }
+.head { grid-template-columns: minmax(0, 1fr); }
+.mode { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { font: inherit; font-size: 12px; border: 0; background: transparent; color: var(--fg); padding: 4px 11px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--panel); font-weight: 600; }
+.seg button:focus-visible, .wchip:focus-visible, .infobtn:focus-visible, .wbox button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.legend { display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+.legend i { width: 18px; height: 10px; border-radius: 2px; background: var(--c); }
+.legend[hidden] { display: none; }
+.wchips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.wchips > span { font-size: 12px; color: var(--muted); margin-right: 2px; }
+.wchip { display: inline-flex; align-items: center; gap: 5px; border: 1px dashed var(--line); background: transparent; color: var(--fg); font: inherit; font-size: 12px; padding: 3px 9px; border-radius: 999px; cursor: pointer; }
+.wchip small { color: var(--muted); font-variant-numeric: tabular-nums; }
+.wchip[aria-pressed="true"] { border-style: solid; border-color: var(--warn); background: var(--warnBg); }
+.row .pn .wi { margin-left: 6px; color: var(--warn); font-size: 12px; }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.infobtn { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 0; padding: 2px 0; cursor: pointer; }
+.infobtn svg { flex: none; }
+.infobtn:hover { color: var(--fg); }
+.wbox { margin: 8px 0 10px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--warnLine); background: var(--warnBg); }
+.wbox .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.wbox .tags span { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--warnLine); }
+.wbox .tags span.sev { color: var(--warn); border-color: var(--warn); font-weight: 600; }
+.wbox .hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; }
+.wbox button { font: inherit; font-size: 12px; color: var(--accent); background: transparent; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+dialog.sheet { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--fg); padding: 0; width: min(520px, calc(100vw - 32px)); max-height: min(80vh, 720px); }
+dialog.sheet::backdrop { background: rgba(0, 0, 0, .5); }
+.sheet .sh { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); }
+.sheet h2 { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+.sheet .x { font: inherit; font-size: 20px; line-height: 1; background: transparent; border: 0; color: var(--muted); cursor: pointer; padding: 4px 6px; }
+.sheet .sb { padding: 12px 16px 16px; font-size: 13px; line-height: 1.5; }
+.sheet .sb p { margin: 0 0 10px; }
+.sheet ul { list-style: none; margin: 0; padding: 0; }
+.sheet li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.sheet li .c { grid-row: 1 / span 2; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--warnLine); align-self: start; white-space: nowrap; }
+.sheet li .c.sev { color: var(--warn); border-color: var(--warn); }
+.sheet li .w { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sheet li .w b { color: var(--momFg); font-weight: 600; }
+.sheet .note { margin-top: 12px; font-size: 12px; color: var(--muted); }
+.tomap { display: none; }
+@media (max-width: 760px) {
+  .tomap { position: fixed; z-index: 1000; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 14px; font-weight: 600; color: var(--panel); background: var(--accent); border: 0; border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(0, 0, 0, .35); cursor: pointer; }
+  .tomap[hidden] { display: none; }
+}
 
 .leaflet-container { font-family: var(--font-body); }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--panel); color: var(--fg); }
@@ -119,22 +180,34 @@ h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 3
   <aside>
     <div class="head">
       <div class="eyebrow">Konya · Beyşehir · Üstünler Mah.</div>
-      <h1>Üstünler Parselleri</h1>
+      <h1>Üstünler Tapu Haritası</h1>
       <div class="stats" id="stats"></div>
+      <div class="mode"><span>Renk</span>
+        <div class="seg" role="group" aria-label="Harita renkleri">
+          <button type="button" data-m="tur" aria-pressed="true">Türe göre</button>
+          <button type="button" data-m="pay" aria-pressed="false">Paya göre</button>
+        </div>
+        <span class="legend" id="legend" hidden></span>
+      </div>
       <div class="chips" id="chips"></div>
+      <div class="wchips" id="wchips"><span>Kayıtlar</span></div>
       <div class="tools">
         <input id="q" type="search" placeholder="Parsel no veya mevkii ara" aria-label="Parsel ara">
         <select id="sort" aria-label="Sıralama">
           <option value="parsel">Parsel no</option>
-          <option value="alan">Büyükten küçüğe</option>
+          <option value="pay">Payı büyükten küçüğe</option>
+          <option value="alan">Alanı büyükten küçüğe</option>
           <option value="mevkii">Mevkii</option>
         </select>
       </div>
     </div>
     <div class="list" id="list"></div>
-    <div class="foot">Kaynak: Web Tapu taşınmaz listesi (30.10.2026) ve TKGM Parsel Sorgu sınırları. Alanlar parselin tamamıdır, hisse payı değildir. 5 parselde iki ayrı hisse kaydı var. Uydu: Esri World Imagery. Bilgi amaçlıdır.</div>
+    <div class="foot"><span>Bilgi amaçlıdır</span>
+      <button type="button" class="infobtn" id="infobtn"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4M8 4.8v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Kaynak ve açıklamalar</button></div>
   </aside>
 </div>
+<button type="button" class="tomap" id="tomap" hidden><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Haritaya dön</button>
+<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle"><div class="sh"><h2 id="sheetTitle"></h2><button type="button" class="x" aria-label="Kapat">×</button></div><div class="sb" id="sheetBody"></div></dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -145,6 +218,13 @@ const pctFmt = p => "%" + p.toLocaleString("tr-TR", { maximumFractionDigits: p >
 const COLORS = { "Tarla": "#f2c14e", "Bağ": "#e05fb8", "Arsa": "#ff5a4f", "Kavaklık": "#7ee08a", "Bahçe": "#4fd1d9", "Sebze Bahçesi": "#c4f05a", "Yol": "#d7dde0" };
 const fmt = (n, d = 0) => n.toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d });
 const feats = DATA.features;
+// Tapu şerh/beyan kayıtlarından parsel başına dikkat notları (borçlu adı ve tutar bilinçli olarak yok)
+const WARN = {"7820":[{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"4806":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"4845":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":6,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":false,"n":4,"date":"20.03.2023"}],"5535":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":6,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":false,"n":4,"date":"20.03.2023"}],"7284":[{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"7389":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"8480":[{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"2692":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"2739":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"7385":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"14130":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"14197":[{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"9547":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"05.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":4,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":2,"date":"30.05.2022"}],"9730":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":34,"date":"05.06.2026"},{"cat":"mahkeme","text":"Bir ortak vesayet altında","scope":"hisse","mom":false,"n":2,"date":"20.02.2023"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":6,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":2,"date":"30.05.2022"}],"9804":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":22,"date":"05.08.2026"},{"cat":"mahkeme","text":"Bir ortak vesayet altında","scope":"hisse","mom":false,"n":2,"date":"20.02.2023"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":6,"date":"20.03.2023"},{"cat":"kiyi","text":"2238 m²'lik kısmı kıyı kenar çizgisi içinde","scope":"parsel","mom":false,"n":2,"date":"11.07.2017"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":2,"date":"30.05.2022"}],"1060":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"mahkeme","text":"Bir ortak vesayet altında","scope":"hisse","mom":false,"n":1,"date":"30.04.2026"}],"108":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"186":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"187":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"7973":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"8059":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"8280":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"3568":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"3688":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"477":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"483":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"3904":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"3778":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"3994":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"4354":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"5094":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"5818":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"5013":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"7448":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"}],"225":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"949":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"kamu","text":"TEK (Elektrik) kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":true,"n":1,"date":"30.12.1985"},{"cat":"kamu","text":"TEK (Elektrik) kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":false,"n":16,"date":"30.12.1985"},{"cat":"sit","text":"I. derece arkeolojik sit alanı","scope":"parsel","mom":false,"n":1,"date":"10.10.2025"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"950":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"kamu","text":"TEK (Elektrik) kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":true,"n":1,"date":"30.12.1985"},{"cat":"kamu","text":"TEK (Elektrik) kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":false,"n":16,"date":"30.12.1985"},{"cat":"sit","text":"I. derece arkeolojik sit alanı","scope":"parsel","mom":false,"n":1,"date":"10.10.2025"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"8384":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"1108":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"2195":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"2311":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"8803":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"10.06.2026"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"9413":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":4,"date":"10.06.2026"},{"cat":"mahkeme","text":"Bir ortak vesayet altında","scope":"hisse","mom":false,"n":1,"date":"20.02.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"1638":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":3,"date":"10.06.2026"}],"1642":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":8,"date":"12.10.2026"}],"11698":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"14844":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":18,"date":"21.09.2026"},{"cat":"mahkeme","text":"Bir ortağın hissesi için mahkeme kararıyla satış kaydı","scope":"hisse","mom":false,"n":1,"date":"25.06.2026"},{"cat":"mahkeme","text":"Tereke tespit davası açılmış","scope":"hisse","mom":false,"n":1,"date":"02.04.2025"},{"cat":"mahkeme","text":"Bir ortağın hissesinde konkordato geçici mühlet kaydı","scope":"hisse","mom":false,"n":2,"date":"22.10.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"14845":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":19,"date":"21.09.2026"},{"cat":"kamu","text":"Karayolları 524 m²'lik payı anlaşmayla kamulaştırıp malik olmuş","scope":"parsel","mom":false,"n":1,"date":""},{"cat":"mahkeme","text":"Tereke tespit davası açılmış","scope":"hisse","mom":false,"n":1,"date":"02.04.2025"},{"cat":"mahkeme","text":"Bir ortağın hissesinde konkordato geçici mühlet kaydı","scope":"hisse","mom":false,"n":2,"date":"22.10.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"15231":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"9909":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"kiyi","text":"1024,17 m²'lik kısmı kıyı kenar çizgisi içinde","scope":"parsel","mom":false,"n":1,"date":"11.07.2017"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"2889":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":19,"date":"21.09.2026"},{"cat":"mahkeme","text":"Bir ortağın hissesi için mahkeme kararıyla satış kaydı","scope":"hisse","mom":false,"n":1,"date":"25.06.2026"},{"cat":"mahkeme","text":"Tereke tespit davası açılmış","scope":"hisse","mom":false,"n":1,"date":"02.04.2025"},{"cat":"mahkeme","text":"Bir ortağın hissesinde konkordato geçici mühlet kaydı","scope":"hisse","mom":false,"n":2,"date":"22.10.2026"},{"cat":"sit","text":"Doğal sit- sürdürülebilir koruma alanı ve kontrollü kullanım alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"5042":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":1,"date":"26.06.2026"}],"11782":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"11783":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"3436":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":17,"date":"21.09.2026"},{"cat":"mahkeme","text":"Bir ortağın hissesi için mahkeme kararıyla satış kaydı","scope":"hisse","mom":false,"n":1,"date":"25.06.2026"},{"cat":"mahkeme","text":"Tereke tespit davası açılmış","scope":"hisse","mom":false,"n":1,"date":"02.04.2025"}],"11701":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":2,"date":"26.06.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"kiyi","text":"1506,86 m²'lik kısmı kıyı kenar çizgisi içinde","scope":"parsel","mom":false,"n":1,"date":"11.07.2017"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"14991":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":6,"date":"27.10.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"15381":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":5,"date":"26.06.2026"},{"cat":"kamu","text":"Karayolları 242 m²'lik payı anlaşmayla kamulaştırıp malik olmuş","scope":"parsel","mom":false,"n":1,"date":""},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"15403":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":6,"date":"27.10.2026"},{"cat":"kamu","text":"Karayolları kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":true,"n":1,"date":"11.11.1997"},{"cat":"kamu","text":"Karayolları kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":false,"n":58,"date":"11.11.1997"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":4,"date":"20.03.2023"}],"15382":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":6,"date":"27.10.2026"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}],"15405":[{"cat":"haciz","text":"","scope":"hisse","mom":false,"n":6,"date":"27.10.2026"},{"cat":"kamu","text":"Karayolları kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":true,"n":1,"date":"11.11.1997"},{"cat":"kamu","text":"Karayolları kamulaştırma şerhi (2942 s. K. md. 7)","scope":"hisse","mom":false,"n":58,"date":"11.11.1997"},{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":4,"date":"20.03.2023"}],"11668":[{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"},{"cat":"kiyi","text":"15921 m²'lik kısmı kıyı kenar çizgisi içinde","scope":"parsel","mom":false,"n":1,"date":"11.07.2017"},{"cat":"sit","text":"Doğal sit- nitelikli doğal koruma alanı","scope":"parsel","mom":false,"n":1,"date":"30.05.2022"}],"5862":[{"cat":"vergi","text":"Ayşe Selek'in veraset ve intikal vergisi ilişiği kesilmemiş","scope":"hisse","mom":true,"n":3,"date":"20.03.2023"}]};
+const WCATS = { kamu: "Kamulaştırma", kiyi: "Kıyı çizgisi", mahkeme: "Mahkeme / dava", haciz: "Haciz", vergi: "Veraset vergisi", sit: "Sit alanı" };
+const SEVERE = new Set(["kamu", "kiyi", "mahkeme"]);
+const wcats = pn => [...new Set((WARN[pn] || []).map(w => w.cat))];
+const severe = pn => wcats(pn).some(c => SEVERE.has(c));
+const momM2 = pn => { const m = OWNERS[pn] && OWNERS[pn].rows.find(r => r.mom); return m ? m.m2 : 0; };
 feats.forEach(f => { f.properties.mevkii = f.properties.mevkii || "—"; });
 
 // Uydu karoları sayfayla birlikte yayınlanan JSON paketlerinden gelir
@@ -186,7 +266,16 @@ L.marker([37.645, 31.56], { pane: "lake", interactive: false, keyboard: false,
 const active = new Set(Object.keys(COLORS));
 let selected = null;
 const layers = {};
-const style = (f, on) => ({ color: on ? "#ffffff" : COLORS[f.properties.nitelik], weight: on ? 3.5 : 2, fillColor: COLORS[f.properties.nitelik], fillOpacity: on ? 0.55 : 0.32 });
+// Paya göre: annemizin m² payı beş dilimde açıktan koyuya
+let colorMode = "tur";
+const PAYCOL = ["#fff3b0", "#ffd166", "#f59e3b", "#e4572e", "#a4161a"];
+const PAYCUT = [10, 50, 150, 400];
+const payBin = m2 => PAYCUT.filter(c => m2 >= c).length;
+const colorOf = f => colorMode === "pay" ? PAYCOL[payBin(momM2(f.properties.parsel))] : COLORS[f.properties.nitelik];
+const style = (f, on) => {
+  const c = colorOf(f), pay = colorMode === "pay";
+  return { color: on ? "#ffffff" : c, weight: on ? 3.5 : 2, fillColor: c, fillOpacity: on ? 0.6 : pay ? 0.6 : 0.32 };
+};
 
 function videoHtml(pn) {
   return (VIDEOS[pn] || []).map(v => `<a class="vid" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
@@ -212,6 +301,13 @@ function ownersHtml(pn) {
   return momBox + `<div class="own"><h4><span>Diğer ortaklar</span><span>${others.length} kişi</span></h4><ol>${li}</ol></div>`;
 }
 
+function warnHtml(pn) {
+  const cs = wcats(pn); if (!cs.length) return "";
+  const order = Object.keys(WCATS).filter(c => cs.includes(c));
+  return `<div class="wbox"><div class="hd"><span>${severe(pn) ? "⚠ " : ""}Tapu kayıtlarında ${order.length} konu</span><button type="button" data-w="${pn}">Ayrıntılar</button></div>
+    <div class="tags">${order.map(c => `<span${SEVERE.has(c) ? ' class="sev"' : ""}>${WCATS[c]}</span>`).join("")}</div></div>`;
+}
+
 function popupHtml(p, c) {
   const tkgm = `https://parselsorgu.tkgm.gov.tr/#ara/idari/144099/${p.ada}/${p.parsel}/1`;
   const gm = `https://www.google.com/maps/search/?api=1&query=${c.lat.toFixed(6)},${c.lng.toFixed(6)}`;
@@ -219,6 +315,7 @@ function popupHtml(p, c) {
     <div class="meta">${p.nitelik} · ${p.mevkii} · ${fmt(p.alan, 2)} m² (${fmt(p.alan / 1000, 2)} dönüm)<br><span>Taşınmaz No ${p.tasinmazNo}</span></div>
     ${videoHtml(p.parsel)}
     ${ownersHtml(p.parsel)}
+    ${warnHtml(p.parsel)}
     <div class="links"><a href="${gm}" target="_blank" rel="noopener">Google Haritalar'da aç</a><a href="${tkgm}" target="_blank" rel="noopener">TKGM</a></div></div>`;
 }
 
@@ -226,7 +323,7 @@ feats.forEach(f => {
   const lyr = L.geoJSON(f, { style: () => style(f, false) });
   const center = lyr.getBounds().getCenter();
   lyr.bindPopup(() => popupHtml(f.properties, center), { maxWidth: 340, minWidth: 280, autoPanPadding: [12, 12] });
-  lyr.bindTooltip(f.properties.parsel, { permanent: true, direction: "center", className: "plabel" });
+  lyr.bindTooltip(f.properties.parsel + (severe(f.properties.parsel) ? " ⚠" : ""), { permanent: true, direction: "center", className: "plabel" });
   lyr.on("click", () => select(f.properties.parsel, false));
   layers[f.properties.parsel] = { lyr, f };
 });
@@ -262,9 +359,11 @@ function momShare(pn) {
 }
 
 const q = document.getElementById("q"), sortSel = document.getElementById("sort");
+const wactive = new Set();
 function visible() {
   const s = q.value.trim().toLocaleLowerCase("tr");
   return feats.filter(f => active.has(f.properties.nitelik) &&
+    (!wactive.size || wcats(f.properties.parsel).some(c => wactive.has(c))) &&
     (!s || f.properties.parsel.includes(s) || f.properties.mevkii.toLocaleLowerCase("tr").includes(s)));
 }
 function render() {
@@ -272,14 +371,15 @@ function render() {
   Object.entries(layers).forEach(([pn, { lyr }]) => ids.has(pn) ? lyr.addTo(map) : lyr.remove());
   syncLabels();
   const k = sortSel.value;
-  vis.sort((a, b) => k === "alan" ? b.properties.alan - a.properties.alan
+  vis.sort((a, b) => k === "pay" ? momM2(b.properties.parsel) - momM2(a.properties.parsel)
+    : k === "alan" ? b.properties.alan - a.properties.alan
     : k === "mevkii" ? a.properties.mevkii.localeCompare(b.properties.mevkii, "tr") || +a.properties.parsel - +b.properties.parsel
     : +a.properties.parsel - +b.properties.parsel);
   const list = document.getElementById("list");
   list.innerHTML = vis.length ? vis.map(f => { const p = f.properties; return `
-    <button class="row${p.parsel === selected ? " on" : ""}" data-p="${p.parsel}" style="--c:${COLORS[p.nitelik]}">
+    <button class="row${p.parsel === selected ? " on" : ""}" data-p="${p.parsel}" style="--c:${colorOf(f)}">
       <span class="sw"></span>
-      <span><div class="pn">${p.parsel}</div><div class="sub">${p.nitelik} · ${p.mevkii}${p.hisseKayit > 1 ? " · 2 hisse kaydı" : ""}</div></span>
+      <span><div class="pn">${p.parsel}${severe(p.parsel) ? '<span class="wi" title="Tapu kaydında önemli not var">⚠</span>' : ""}</div><div class="sub">${p.nitelik} · ${p.mevkii}${p.hisseKayit > 1 ? " · 2 hisse kaydı" : ""}</div></span>
       <span class="area">${fmt(p.alan)} m²<small>${momShare(p.parsel)}</small></span>
     </button>`; }).join("") : `<div class="empty">Bu filtreyle eşleşen parsel yok.</div>`;
   const tot = vis.reduce((s, f) => s + f.properties.alan, 0);
@@ -303,6 +403,68 @@ document.getElementById("chips").addEventListener("click", e => {
   render();
 });
 
+// Kayıt filtresi: seçili konulardan en az biri olan parseller
+const wcount = {};
+feats.forEach(f => wcats(f.properties.parsel).forEach(c => wcount[c] = (wcount[c] || 0) + 1));
+document.getElementById("wchips").insertAdjacentHTML("beforeend", Object.keys(WCATS).filter(c => wcount[c])
+  .map(c => `<button class="wchip" aria-pressed="false" data-w="${c}">${SEVERE.has(c) ? "⚠ " : ""}${WCATS[c]} <small>${wcount[c]}</small></button>`).join(""));
+document.getElementById("wchips").addEventListener("click", e => {
+  const c = e.target.closest(".wchip"); if (!c) return;
+  const w = c.dataset.w;
+  wactive.has(w) ? wactive.delete(w) : wactive.add(w);
+  c.setAttribute("aria-pressed", wactive.has(w));
+  render();
+});
+
+// Renk kipi
+function setMode(m) {
+  colorMode = m;
+  document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.m === m));
+  const lg = document.getElementById("legend");
+  lg.hidden = m !== "pay";
+  lg.innerHTML = `<span>az</span>${PAYCOL.map((c, i) => `<i style="--c:${c}" title="${i ? `≥ ${PAYCUT[i - 1]} m²` : `< ${PAYCUT[0]} m²`}"></i>`).join("")}<span>çok</span>`;
+  Object.entries(layers).forEach(([pn, { lyr, f }]) => lyr.setStyle(style(f, pn === selected)));
+  render();
+}
+document.querySelector(".seg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setMode(b.dataset.m); });
+
+// Ayrıntı ve bilgi penceresi
+const sheet = document.getElementById("sheet");
+function openSheet(title, html) {
+  document.getElementById("sheetTitle").textContent = title;
+  document.getElementById("sheetBody").innerHTML = html;
+  sheet.showModal();
+}
+sheet.querySelector(".x").addEventListener("click", () => sheet.close());
+sheet.addEventListener("click", e => { if (e.target === sheet) sheet.close(); });
+function where(w) {
+  if (w.cat === "haciz") return w.mom ? "<b>Annemizin hissesinde</b>" : `Diğer ortakların hisselerinde · ${w.n} kayıt`;
+  if (w.mom) return `<b>Annemizin hissesinde de var</b>${w.n > 1 ? ` · toplam ${w.n} kayıt` : ""}`;
+  return w.scope === "parsel" ? "Parselin tamamı için" : `Diğer ortakların hisselerinde${w.n > 1 ? ` · ${w.n} kayıt` : ""}`;
+}
+function warnSheet(pn) {
+  const ws = (WARN[pn] || []).slice().sort((a, b) => Object.keys(WCATS).indexOf(a.cat) - Object.keys(WCATS).indexOf(b.cat));
+  const li = ws.map(w => `<li><span class="c${SEVERE.has(w.cat) ? " sev" : ""}">${WCATS[w.cat]}</span>
+    <span>${w.cat === "haciz" ? (w.mom ? "Hisse üzerinde haciz şerhi" : "Ortak hisselerinde haciz şerhi") : w.text}</span>
+    <span class="w">${where(w)}${w.date ? ` · son kayıt ${w.date}` : ""}</span></li>`).join("");
+  const p = layers[pn].f.properties;
+  openSheet(`Parsel ${pn} · tapu kayıtları`, `<p>${p.nitelik} · ${p.mevkii} · ${fmt(p.alan, 2)} m²</p><ul>${li}</ul>
+    <p class="note">Tapu kaydındaki şerh ve beyanların özetidir. Haciz kayıtlarında borçlu adı ve tutar gösterilmiyor. Kesin bilgi için güncel tapu kaydına bakın.</p>`);
+}
+// Leaflet açılır pencere tıklamaları haritaya yayılmadığı için düğmeyi pencere açılınca bağla
+map.on("popupopen", e => { const b = e.popup.getElement().querySelector(".wbox button"); if (b) b.addEventListener("click", () => warnSheet(b.dataset.w)); });
+document.getElementById("infobtn").addEventListener("click", () => openSheet("Kaynak ve açıklamalar", `
+  <p><b>Kaynak:</b> Web Tapu taşınmaz listesi ve tapu kayıtları (30.10.2026), TKGM Parsel Sorgu sınırları. Uydu görüntüsü: Esri World Imagery.</p>
+  <p><b>Alanlar:</b> Listedeki m² parselin tamamıdır. Annemizin payı sarı renkte ayrıca yazılıdır.</p>
+  <p><b>İki hisse kaydı:</b> 5 parselde annemizin hissesi biri kızlık soyadı Selek ile olmak üzere iki ayrı kayıtta; sayfada toplamı gösteriliyor.</p>
+  <p><b>Kayıtlar:</b> ⚠ işareti kamulaştırma, kıyı çizgisi veya mahkeme kaydı olan parselleri gösterir. Haciz, sit alanı ve veraset vergisi kayıtları filtreden seçilebilir.</p>
+  <p class="note">Bilgi amaçlıdır; resmi işlemler için güncel tapu kaydı esas alınmalıdır.</p>`));
+
+// Telefonda liste aşağıdayken haritaya dönüş düğmesi
+const tomap = document.getElementById("tomap");
+new IntersectionObserver(([e]) => { tomap.hidden = e.isIntersecting; }, { threshold: 0.15 }).observe(document.getElementById("map"));
+tomap.addEventListener("click", () => document.getElementById("map").scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+
 // Sıfırla: seçimi, aramayı, filtreleri ve görünümü ilk açılış hâline döndür
 function resetAll() {
   map.closePopup();
@@ -311,6 +473,9 @@ function resetAll() {
   q.value = ""; sortSel.value = "parsel";
   Object.keys(COLORS).forEach(n => active.add(n));
   document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "true"));
+  wactive.clear();
+  document.querySelectorAll(".wchip").forEach(c => c.setAttribute("aria-pressed", "false"));
+  if (colorMode !== "tur") setMode("tur");
   render();
   document.getElementById("list").scrollTop = 0;
   map.flyToBounds(bounds, { padding: [20, 20], duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.8 });
