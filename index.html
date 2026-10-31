@@ -449,7 +449,7 @@ function where(w) {
 }
 const tl = n => n == null ? "—" : n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
 function hacizTable(list) {
-  return `<table>${list.map(h => `<tr><td><b>${h.debtor || "—"}</b><small>${h.creditor || h.office}${h.creditor && h.office ? ` · ${h.office}` : ""}</small><small>${h.kind} · ${h.date}</small></td>
+  return `<table>${list.map(h => `<tr><td><b>${h.debtor || "—"}</b><small>${h.creditor || h.office}${h.creditor && h.office && h.office.toLocaleLowerCase("tr") !== h.creditor.toLocaleLowerCase("tr") ? ` · ${h.office}` : ""}</small><small>${h.kind} · ${h.date}</small></td>
     <td class="a">${tl(h.amount)}</td></tr>`).join("")}</table>`;
 }
 function warnSheet(pn) {
